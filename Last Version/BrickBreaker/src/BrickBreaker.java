@@ -1,6 +1,6 @@
-import java.awt.*;//image
-import java.io.*;//audio
-import java.net.URL;//audio
+import java.awt.*; //image
+import java.io.*; //audio
+import java.net.URL; //audio
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -13,26 +13,29 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.*;//audio
-import javax.swing.*;//audio
+import javax.sound.sampled.*; //audio
+import javax.swing.*; //audio
 
-public class BrickBreaker extends JPanel implements KeyListener,
-		ActionListener, Runnable {
+public class BrickBreaker extends JPanel implements KeyListener, ActionListener, Runnable {
 	public static JFrame frame;
+
 	// movement keys..
 	static boolean right = false;
 	static boolean left = false;
 
-	// variables declaration for ball.................................
+	// variables declaration for ball
 	int ballx = 160;
 	int bally = 218;
-	// variables declaration for bat..................................
+
+	// variables declaration for bat
 	int batx = 160;
 	int baty = 245 + 35;
-	// variables declaration for brick...............................
+	
+	// variables declaration for brick
 	int brickx = 70;
 	int bricky = 50;
-	// declaring ball, paddle,bricks
+	
+	// declaring ball, paddle, bricks
 	Rectangle Ball = new Rectangle(ballx, bally, 5, 5);
 	Rectangle Bat = new Rectangle(batx, baty, 50, 5);
 	Rectangle[] Brick = new Rectangle[12];
@@ -46,15 +49,16 @@ public class BrickBreaker extends JPanel implements KeyListener,
 
 		try {
 			// Open an audio input stream.
-			URL url = this.getClass().getClassLoader()
-					.getResource("Kitaro.wav");
+			URL url = this.getClass().getClassLoader().getResource("Kitaro.wav");
 			AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+
 			// Get a sound clip resource.
 			Clip clip = AudioSystem.getClip();
+
 			// Open audio clip and load samples from the audio input stream.
 			clip.open(audioIn);
-			clip.loop(Clip.LOOP_CONTINUOUSLY);// Audio Clip won't loop
-												// continuously
+			clip.loop(Clip.LOOP_CONTINUOUSLY); // Audio Clip won't loop continuously
+
 			// clip.start();
 		} catch (UnsupportedAudioFileException e) {
 			e.printStackTrace();
@@ -101,18 +105,20 @@ public class BrickBreaker extends JPanel implements KeyListener,
 		}
 
 		// bat image:
-
 		imgfile = new File("src//bat.png");
+
 		try {
 			BufferedImage bat = ImageIO.read(imgfile);
 			g.drawImage(bat, Bat.x, Bat.y, Bat.width, Bat.height, null);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 		g.setColor(Color.white);
 		g.fillRect(0, 0, 450, 50);
 		g.setColor(Color.gray);
 		g.drawRect(0, 50, 343, 250);
+
 		for (int i = 0; i < Brick.length; i++) {
 			if (Brick[i] != null) {
 				imgfile = new File("src//brick.png");
@@ -125,18 +131,12 @@ public class BrickBreaker extends JPanel implements KeyListener,
 				}
 
 			}
-			// ===================================set scorre
+
+			// set scorre
 			Font score = new Font("Arial", Font.BOLD, 20);
 			g.setColor(Color.darkGray);
 			g.setFont(score);
 			g.drawString(statusScore, 10, 30);
-
-			// ===================================set lives
-			// Font life = new Font("Arial", Font.BOLD, 20);
-			// g.setColor(Color.green);
-			// g.setFont(life);
-			// g.drawString(lives, 260, 30);
-			// ===================================
 		}
 
 		if (ballFallDown == true || bricksOver == true) {
@@ -150,25 +150,24 @@ public class BrickBreaker extends JPanel implements KeyListener,
 		}
 	}
 
-	// /...Game Loop...................
+	//Game Loop:
 
-	// /////////////////// When ball strikes borders......... it
-	// reverses......==>
+	//When ball strikes borders, it reverses ==>
 	int movex = -1;
 	int movey = -1;
 	int pause = 0;
 	boolean ballFallDown = false;
 	boolean bricksOver = false;
 	int count = 0;
-	// int playLives = 3;
 	int playState = 1;
 	String status;
+
 	// String lives;
 	String statusScore;
 
 	public void run() {
 
-		// //////////// =====Creating bricks for the game===>.....
+		//Creating bricks for the game:
 		for (int i = 0; i < Brick.length; i++) {
 			Brick[i] = new Rectangle(brickx, bricky + 40, 30, 10);
 			if (i == 5) {
@@ -181,9 +180,10 @@ public class BrickBreaker extends JPanel implements KeyListener,
 			}
 			brickx += 31;
 		}
-		// ===========BRICKS created for the game new ready to use===
 
-		// == ball reverses when touches the brick=======
+		//BRICKS created for the game new ready to use
+
+		//ball reverses when touches the brick
 
 		while (ballFallDown == false && bricksOver == false) {
 			// if(gameOver == true){return;}
@@ -198,13 +198,15 @@ public class BrickBreaker extends JPanel implements KeyListener,
 					}
 				}
 			}
-				// =========================draw score
+			
+			// draw score
 			if (count >= 0 || count < 0) {
 				statusScore = "Score: " + count;
 				// lives = "Lives: " + playLives;
 			}
 
-			if (count == Brick.length * 3) {// check if ball hits all bricks Brick.length
+			// check if ball hits all bricks Brick.length
+			if (count == Brick.length * 3) {
 				bricksOver = true;
 				status = "YOU WON THE GAME";
 				playState = 0;
@@ -231,39 +233,41 @@ public class BrickBreaker extends JPanel implements KeyListener,
 			} else if (Bat.x >= 298) {
 				Bat.x = 298;
 			}
-			// ..... Ball reverses when strikes the bat
+
+			// Ball reverses when strikes the bat
 			if (Ball.intersects(Bat)) {
 				movey = -movey;
-				// if(Ball.y + Ball.width >=Bat.y)
 				bataStrike();
 			}
-			// ....Ball reverses when touches left and right boundary
+
+			// Ball reverses when touches left and right boundary
 			if (Ball.x <= 0 || Ball.x + Ball.height >= 343) {
 				movex = -movex;
 				strike();
-			}// if ends here
-			if (Ball.y <= 45) {// ////////////////|| bally + Ball.height >= 250
+			}
+
+			if (Ball.y <= 45) {
 				movey = -movey;
 				strike();
-			}// if ends here.....
+			}
 
-			if (Ball.y > 340) {// when ball falls below bat game is over...
+			// when ball falls below bat game is over
+			if (Ball.y > 340) {
 				ballFallDown = true;
 				status = "YOU LOST THE GAME";
 				playState = 0;
 				repaint();
 			}
+
 			try {
 				Thread.sleep(8);
 			} catch (Exception ex) {
-			}// try catch ends here
+			}
 
-		}// while loop ends here
+		}
 	}
 
-	// loop ends here
-
-	// ///////..... HANDLING KEY EVENTS................//
+	// HANDLING KEY EVENTS
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int keyCode = e.getKeyCode();
@@ -311,19 +315,20 @@ public class BrickBreaker extends JPanel implements KeyListener,
 		if (str.equals("Restart")) {
 			playState = 1;
 			restart();
-			// this.paint0();
 		}
 	}
 
-	public void bataStrike() { // add audio when strike brick
+	// add audio when strike brick:
+	public void bataStrike() { 
 
 		try {
 			// Open an audio input stream.
-			URL url = this.getClass().getClassLoader()
-					.getResource("bataStrike.wav");
+			URL url = this.getClass().getClassLoader().getResource("bataStrike.wav");
 			AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+
 			// Get a sound clip resource.
 			Clip clip = AudioSystem.getClip();
+
 			// Open audio clip and load samples from the audio input stream.
 			clip.open(audioIn);
 			clip.start();
@@ -336,15 +341,17 @@ public class BrickBreaker extends JPanel implements KeyListener,
 		}
 	}
 
-	public void brickStrike() { // add audio when trike brik
+	// add audio when trike brik:
+	public void brickStrike() { 
 
 		try {
 			// Open an audio input stream.
-			URL url = this.getClass().getClassLoader()
-					.getResource("brickStrike.wav");
+			URL url = this.getClass().getClassLoader().getResource("brickStrike.wav");
 			AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+
 			// Get a sound clip resource.
 			Clip clip = AudioSystem.getClip();
+
 			// Open audio clip and load samples from the audio input stream.
 			clip.open(audioIn);
 			clip.start();
@@ -357,15 +364,17 @@ public class BrickBreaker extends JPanel implements KeyListener,
 		}
 	}
 
-	public void strike() { // add audio when trike wall
+	// add audio when trike wall:
+	public void strike() { 
 
 		try {
 			// Open an audio input stream.
-			URL url = this.getClass().getClassLoader()
-					.getResource("strike.wav");
+			URL url = this.getClass().getClassLoader().getResource("strike.wav");
 			AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+
 			// Get a sound clip resource.
 			Clip clip = AudioSystem.getClip();
+
 			// Open audio clip and load samples from the audio input stream.
 			clip.open(audioIn);
 			clip.start();
@@ -379,26 +388,24 @@ public class BrickBreaker extends JPanel implements KeyListener,
 	}
 
 	public void restart() {
-		// playLives--;
-		// if (playLives == 0) {
-		// count = 0;
-		// playLives = 3;
-		// }
 
 		requestFocus(true);
-		// variables declaration for ball.................................
+
+		// variables declaration for ball
 		ballx = 160;
 		bally = 218;
-		// variables declaration for bat..................................
+
+		// variables declaration for bat
 		batx = 160;
 		baty = 245 + 35;
-		// variables declaration for brick...............................
+
+		// variables declaration for brick
 		brickx = 70;
 		bricky = 50;
+
 		// declaring ball, paddle,bricks
 		Ball = new Rectangle(ballx, bally, 5, 5);
 		Bat = new Rectangle(batx, baty, 50, 5);
-		// Rectangle Brick;// = new Rectangle(brickx, bricky, 30, 10);
 		Brick = new Rectangle[12];
 
 		movex = -1;
@@ -406,7 +413,7 @@ public class BrickBreaker extends JPanel implements KeyListener,
 		ballFallDown = false;
 		bricksOver = false;
 		status = null;
-		// //////////// =====Creating bricks for the game===>.....
+
 		/*
 		 * creating bricks again because this for loop is out of while loop in
 		 * run method
@@ -423,6 +430,5 @@ public class BrickBreaker extends JPanel implements KeyListener,
 			}
 			brickx += 31;
 		}
-		//repaint();
 	}
 }
